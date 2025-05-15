@@ -9,16 +9,16 @@
           <input
             type="text"
             class="form-control"
-            v-model="criterioDeBusquedaNombre"
+            v-model.trim="criterioDeBusquedaNombre"
             placeholder="Ingresar un nombre y/o apellido..."
           />
         </div>
 
         <div class="col">
           <input
-            type="text"
+            type="number"
             class="form-control"
-            v-model="criterioDeBusquedaDNI"
+            v-model.trim="criterioDeBusquedaDNI"
             placeholder="Ingresar DNI..."
           />
         </div>
@@ -27,7 +27,7 @@
     <div
       class="mt-2"
       v-if="
-        deberiaMostrarAdvertenciaPorCriterio(criterioDeBusquedaDNI) ||
+        deberiaMostrarAdvertenciaPorCriterio(criterioDeBusquedaDNIString) ||
         deberiaMostrarAdvertenciaPorCriterio(criterioDeBusquedaNombre)
       "
     >
@@ -35,13 +35,13 @@
         v-if="deberiaMostrarAdvertenciaPorCriterio(criterioDeBusquedaNombre)"
         class="alert alert-danger my-1"
       >
-        Para buscar por <b>NOMBRE / APELLIDO</b>, ingrese más de 3 caracteres
+        Para buscar por <b>NOMBRE / APELLIDO</b>, ingrese 3 o más caracteres
       </div>
       <div
-        v-if="deberiaMostrarAdvertenciaPorCriterio(criterioDeBusquedaDNI)"
+        v-if="deberiaMostrarAdvertenciaPorCriterio(criterioDeBusquedaDNIString)"
         class="alert alert-danger my-1"
       >
-        Para buscar por <b>DNI</b>, ingrese más de 3 caracteres
+        Para buscar por <b>DNI</b>, ingrese 3 o más caracteres
       </div>
     </div>
     <br />
@@ -115,13 +115,16 @@ export default {
     };
   },
   computed: {
+    criterioDeBusquedaDNIString() {
+      return this.criterioDeBusquedaDNI.toString();
+    },
     personasFiltradas() {
       let filtrados = this.personas;
 
       if (this.deberiaFiltrarPorCriterio(this.criterioDeBusquedaNombre)) {
         filtrados = this.filtrarPorNombreYApellido(filtrados);
       }
-      if (this.deberiaFiltrarPorCriterio(this.criterioDeBusquedaDNI)) {
+      if (this.deberiaFiltrarPorCriterio(this.criterioDeBusquedaDNIString)) {
         filtrados = this.filtrarPorDNI(filtrados);
       }
       return filtrados;
@@ -142,7 +145,7 @@ export default {
 
     filtrarPorDNI(listaPersonas) {
       return listaPersonas.filter((persona) =>
-        persona.dni.toString().includes(this.criterioDeBusquedaDNI)
+        persona.dni.toString().includes(this.criterioDeBusquedaDNIString)
       );
     },
 
